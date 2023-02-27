@@ -29,9 +29,6 @@ func MakeGet() {
 		if err != nil {
 			panic(err)
 		}
-		// body, err := ioutil.ReadAll(resp.Body)
-		// fmt.Println(string(body))
-
 		defer resp.Body.Close()
 
 		var tasks []Task
@@ -40,11 +37,12 @@ func MakeGet() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		tmpl := template.Must(template.ParseFiles("home.html"))
+		tmpl := template.Must(template.ParseFiles("home.page.tmpl"))
 
 		if err := tmpl.Execute(w, tasks); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+
 	})
 	http.ListenAndServe(":8456", nil)
 }

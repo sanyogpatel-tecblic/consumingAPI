@@ -38,7 +38,7 @@ func MakeGet() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		tmpl := template.Must(template.ParseFiles("home.page.tmpl"))
+		tmpl := template.Must(template.ParseFiles("home.html"))
 
 		err = tmpl.Execute(w, tasks)
 		if err != nil {

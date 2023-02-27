@@ -3,6 +3,7 @@ package consuming
 import (
 	"encoding/json"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -39,10 +40,10 @@ func MakeGet() {
 		}
 		tmpl := template.Must(template.ParseFiles("home.page.tmpl"))
 
-		if err := tmpl.Execute(w, tasks); err != nil {
+		err = tmpl.Execute(w, tasks)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-
 	})
-	http.ListenAndServe(":8456", nil)
+	log.Fatal(http.ListenAndServe(":8060", nil))
 }

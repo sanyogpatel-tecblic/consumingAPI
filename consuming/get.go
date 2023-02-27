@@ -15,24 +15,23 @@ type Task struct {
 func MakeGet() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		url := "http://localhost:8010/tasks"
-		resp, err := http.Get(url)
+
+		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			panic(err)
 		}
-		// req, err := http.NewRequest("GET", url, nil)
-		// if err != nil {
-		// 	panic(err)
-		// }
 
 		//now send and retrive the response for that we will be using http.Client()
 
-		// client := &http.Client{}
+		client := &http.Client{}
 
-		// resp, err := client.Do(req)
-		// if err != nil {
-		// 	panic(err)
-		// }
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		// body, err := ioutil.ReadAll(resp.Body)
+		// fmt.Println(string(body))
+
 		defer resp.Body.Close()
 
 		var tasks []Task

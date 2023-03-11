@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>API Example</title>
+</head>
+<body>
+    <button id="getDataButton">Get Data</button>
+
+    <h1>API Example</h1>
+    <div id="data"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+          $('#getDataButton').click(function() {
+            $.ajax({
+              url: 'http://localhost:8010/tasks',
+              method:'GET',
+              dataType: 'json',
+              success: function(data) {
+                $('#data').text(JSON.stringify(data));
+              },
+              error: function(xhr, status, error) {
+                console.log('Error: ' + error.message);
+              }
+            });
+          });
+        });
+        </script>
+    </body>
+</html>

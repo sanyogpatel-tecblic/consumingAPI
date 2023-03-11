@@ -15,15 +15,13 @@ type Task struct {
 
 func MakeGet() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		url := "http://localhost:8010/tasks"
+		url := "http://localhost:8010/users/login"
 
-		req, err := http.NewRequest("GET", url, nil)
+		req, err := http.NewRequest("POST", url, nil)
 		if err != nil {
 			panic(err)
 		}
-
 		//now send and retrive the response for that we will be using http.Client()
-
 		client := &http.Client{}
 
 		resp, err := client.Do(req)

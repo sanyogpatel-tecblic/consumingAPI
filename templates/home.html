@@ -3,31 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>API Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <button id="getDataButton">Get Data</button>
 
-    <h1>API Example</h1>
-    <div id="data"></div>
+    <h1>TODO List</h1>
+    <ul id="task-list">
+      <!-- Tasks will be dynamically added here -->
+    </ul>
+    <script src="script.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
-        $(document).ready(function() {
-          $('#getDataButton').click(function() {
-            $.ajax({
-              url: 'http://localhost:8010/tasks',
-              method:'GET',
-              dataType: 'json',
-              success: function(data) {
-                $('#data').text(JSON.stringify(data));
-              },
-              error: function(xhr, status, error) {
-                console.log('Error: ' + error.message);
-              }
+          fetch('http://localhost:8010/tasks')
+            .then(response => response.json())
+            .then(data => {
+              console.log(data); 
+            })
+            .catch(error => {
+              console.error(error);
             });
-          });
-        });
-        </script>
+    </script>
     </body>
 </html>

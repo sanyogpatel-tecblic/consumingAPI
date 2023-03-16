@@ -2,7 +2,6 @@ package consuming
 
 import (
 	"encoding/json"
-	"html/template"
 	"log"
 	"net/http"
 )
@@ -15,9 +14,9 @@ type Task struct {
 
 func MakeGet() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		url := "http://localhost:8010/users/login"
+		url := "http://localhost:8010/products"
 
-		req, err := http.NewRequest("POST", url, nil)
+		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			panic(err)
 		}
@@ -36,12 +35,12 @@ func MakeGet() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		tmpl := template.Must(template.ParseFiles("./templates/login.page.tmpl"))
+		// tmpl := template.Must(template.ParseFiles("./templates/home.html"))
 
-		err = tmpl.Execute(w, tasks)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		// err = tmpl.Execute(w, tasks)
+		// if err != nil {
+		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+		// }
 	})
 	log.Fatal(http.ListenAndServe(":8060", nil))
 }

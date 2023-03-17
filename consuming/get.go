@@ -2,45 +2,41 @@ package consuming
 
 import (
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 )
 
-type Task struct {
-	ID     int    `json:"id"`
-	Tasks  string `json:"tasks"`
-	UserID int    `json:"userid"`
+type Item struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	ImageURL    string `json:"imageurl"`
 }
 
 func MakeGet() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		url := "http://localhost:8010/products"
-
-		req, err := http.NewRequest("GET", url, nil)
+		// Make a GET request to the API endpoint
+		resp, err := http.Get("http://localhost:8020/items")
 		if err != nil {
-			panic(err)
-		}
-		//now send and retrive the response for that we will be using http.Client()
-		client := &http.Client{}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		defer resp.Body.Close()
 
-		var tasks []Task
-
-		if err := json.NewDecoder(resp.Body).Decode(&tasks); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		// Unmarshal the JSON response into a struct
+		var Items []Item
+		err = json.NewDecoder(resp.Body).Decode(&Items)
+		if err != nil {
+			log.Fatal(err)
 		}
-		// tmpl := template.Must(template.ParseFiles("./templates/home.html"))
 
-		// err = tmpl.Execute(w, tasks)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
+		// Render an HTML page with the data
+		tmpl := template.Must(template.ParseFiles("./templates/home.page.tmpl"))
+		err = tmpl.Execute(w, Items)
+		if err != nil {
+			log.Fatal(err)
+		}
 	})
-	log.Fatal(http.ListenAndServe(":8060", nil))
+	// Serve static files
+	log.Fatal(http.ListenAndServe(":4080", nil))
 }

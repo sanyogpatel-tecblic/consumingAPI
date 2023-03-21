@@ -7,19 +7,21 @@
 	<table>
 		<thead>
 			<tr>
-				<th>ID</th>
+	
 				<th>Name</th>
 				<th>Description</th>
 				<th>Image</th>
 			</tr>
 		</thead>
+
 		<tbody>
 			{{range .}}
 			<tr>
-				<td>{{.ID}}</td>
+		
 				<td>{{.Name}}</td>
 				<td>{{.Description}}</td>
-				<td><img src="{{.ImageURL}}" height="50"></td>
+				
+				<td><img src="/uploads/{{.ImageURL}}" alt="{{.Name}}" height="50"></td>
 			</tr>
 			{{end}}
 		</tbody>

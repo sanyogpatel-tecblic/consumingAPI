@@ -1,42 +1,68 @@
 package consuming
 
 import (
+	"bytes"
 	"encoding/json"
-	"html/template"
-	"log"
+	"fmt"
+	"mime/multipart"
 	"net/http"
+	"text/template"
 )
 
 type Item struct {
-	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	ImageURL    string `json:"imageurl"`
 }
 
-func MakeGet() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Make a GET request to the API endpoint
-		resp, err := http.Get("http://localhost:8020/items")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer resp.Body.Close()
+type APIResponse struct {
+	Items []Item `json:"items"`
+}
 
-		// Unmarshal the JSON response into a struct
-		var Items []Item
-		err = json.NewDecoder(resp.Body).Decode(&Items)
-		if err != nil {
-			log.Fatal(err)
-		}
+func Handler(w http.ResponseWriter, r *http.Request) {
 
-		// Render an HTML page with the data
-		tmpl := template.Must(template.ParseFiles("./templates/home.page.tmpl"))
-		err = tmpl.Execute(w, Items)
-		if err != nil {
-			log.Fatal(err)
-		}
-	})
-	// Serve static files
-	log.Fatal(http.ListenAndServe(":4080", nil))
+	fmt.Println("Listening on port 1080...")
+
+	url := "http://localhost:8020/items"
+	method := "GET"
+
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	err := writer.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	var data Item
+	if err := json.NewDecoder(req.Body).Decode(&data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("./templates/home.page.tmpl")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
